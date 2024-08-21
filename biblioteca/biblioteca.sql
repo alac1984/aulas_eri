@@ -57,7 +57,6 @@ create table if not exists emprestimo (
     constraint fk_id_livro foreign key(id_livro) references livro(id_livro)
 );
 
--- Inserir dados na tabela autor
 insert into autor (nome, sobrenome) values
 ('J.K.', 'Rowling'),
 ('George', 'Orwell'),
@@ -65,7 +64,6 @@ insert into autor (nome, sobrenome) values
 ('Harper', 'Lee'),
 ('Gabriel', 'García Márquez');
 
--- Inserir dados na tabela tipo_livro
 insert into tipo_livro (nome_tipo) values
 ('Ficção'),
 ('Não-ficção'),
@@ -73,7 +71,6 @@ insert into tipo_livro (nome_tipo) values
 ('Romance'),
 ('Biografia');
 
--- Inserir dados na tabela editora
 insert into editora (nome) values
 ('Editora A'),
 ('Editora B'),
@@ -81,14 +78,12 @@ insert into editora (nome) values
 ('Editora D'),
 ('Editora E');
 
--- Inserir dados na tabela situacao
 insert into situacao (id_situacao, descricao) values
 (1, 'Disponível'),
 (2, 'Emprestado'),
 (3, 'Perdido'),
 (4, 'Danificado');
 
--- Inserir dados na tabela livro
 insert into livro (titulo, autor, editora, tipo_livro) values
 ('Harry Potter e a Pedra Filosofal', 1, 1, 3),
 ('1984', 2, 2, 1),
@@ -96,7 +91,6 @@ insert into livro (titulo, autor, editora, tipo_livro) values
 ('O Sol é Para Todos', 4, 4, 4),
 ('Cem Anos de Solidão', 5, 5, 4);
 
--- Inserir dados na tabela aluno
 insert into aluno (nome, sobrenome, endereco, contato) values
 ('Carlos', 'Silva', 'Rua A, 123', '555-1234'),
 ('Ana', 'Oliveira', 'Rua B, 456', '555-5678'),
@@ -104,7 +98,6 @@ insert into aluno (nome, sobrenome, endereco, contato) values
 ('Mariana', 'Costa', 'Rua D, 101', '555-1121'),
 ('João', 'Pereira', 'Rua E, 112', '555-3141');
 
--- Inserir dados na tabela emprestimo
 insert into emprestimo (id_livro, aluno, data_emprestimo, data_devolucao, devolvido) values
 (1, 1, '2024-07-01', '2024-07-15', true),
 (2, 2, '2024-07-05', '2024-07-20', true),
@@ -112,6 +105,24 @@ insert into emprestimo (id_livro, aluno, data_emprestimo, data_devolucao, devolv
 (4, 4, '2024-07-12', '2024-07-28', true),
 (5, 5, '2024-07-15', null, false);
 
--- 01. ENTENDENDO O BANCO
+-- AQUECIMENTO
 
--- Q1)
+-- Q1) Liste todos os livros, mostrando o título, o nome completo do autor (nome e sobrenome) e o nome da editora.
+
+-- Q2) Encontre todos os empréstimos que ainda não foram devolvidos. Mostre o título do livro, o nome do aluno (nome e sobrenome) e a data de empréstimo.
+
+-- Q3) Liste todos os livros de um determinado tipo, como "Fantasia". Mostre o título do livro e o nome completo do autor.
+
+-- Q4) Encontre os autores que têm mais de um livro cadastrado no sistema. Mostre o nome completo do autor e o número de livros que ele possui.
+
+-- Q5) Liste todos os alunos que já pegaram emprestado um livro do tipo "Romance". Mostre o nome do aluno, sobrenome e o título do livro emprestado.
+
+-- ALTERAÇÕES NO BANCO
+
+-- Q6)  A nossa tabela livro representa um exemplar do livro na biblioteca. Mas na nossa biblioteca cada livro tem um número de registro, no formato REG-00000 (quando o livro é comprado pela universidade) ou DOA-00000 (quando o livro foi doado por alguém). Esses números são únicos, ou seja, não há dois livros com número de registro igual. O que fazer para dar de conta dessa lógica?
+
+-- Q7) Agora que nosso livro possui um número de registro, vamos inserir números de registro para os items que não possuímos.
+
+-- Q8) A tabela livro não possui ligação com a tabela situação, ou seja, não temos como cadastrar a situação dos livros. Faça a conexão correta entre essas tabelas e estabeleça para todos os livros atuais o estado de DISPONÍVEL, logo após limpar a tabela de empréstimos.
+
+-- Q9) Agora, faça 2 empréstimos e uma devolução, atribuindo na devolução o status de DANIFICADO para o livro.
