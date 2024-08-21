@@ -108,7 +108,8 @@ insert into emprestimo (id_livro, aluno, data_emprestimo, data_devolucao, devolv
 -- AQUECIMENTO
 
 -- Q1) Liste todos os livros, mostrando o título, o nome completo do autor (nome e sobrenome) e o nome da editora.
--- select
+-- Escreva sua solução aqui
+-- Não esqueça de deixar comentários comentados e código não comentado
 -- Q2) Encontre todos os empréstimos que ainda não foram devolvidos. Mostre o título do livro, o nome do aluno (nome e sobrenome) e a data de empréstimo.
 
 -- Q3) Liste todos os livros de um determinado tipo, como "Fantasia". Mostre o título do livro e o nome completo do autor.
