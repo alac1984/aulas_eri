@@ -133,6 +133,17 @@ where devolvido = false;
 
 -- Q3) Liste todos os livros de um determinado tipo, como "Fantasia". Mostre o título do livro e o nome completo do autor.
 
+select
+    titulo titulo_livro,
+    a.nome nome_autor,
+    a.sobrenome sobrenome_autor,
+    tl.nome_tipo tipo
+from livro
+join autor a on livro.autor = a.id_autor
+join tipo_livro tl on livro.tipo_livro = tl.id_tipo_livro
+where nome_tipo = 'Fantasia'
+;
+
 -- Q4) Encontre os autores que têm mais de um livro cadastrado no sistema. Mostre o nome completo do autor e o número de livros que ele possui.
 
 -- Q5) Liste todos os alunos que já pegaram emprestado um livro do tipo "Romance". Mostre o nome do aluno, sobrenome e o título do livro emprestado.
