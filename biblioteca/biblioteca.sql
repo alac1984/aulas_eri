@@ -121,6 +121,16 @@ from livro
 
 -- Q2) Encontre todos os empréstimos que ainda não foram devolvidos. Mostre o título do livro, o nome do aluno (nome e sobrenome) e a data de empréstimo.
 
+select
+    l.titulo titulo_livro,
+    a.nome nome_aluno,
+    a.sobrenome sobrenome_aluno,
+    data_emprestimo
+from emprestimo
+join aluno a on emprestimo.aluno = a.id_aluno
+join livro l on emprestimo.id_livro = l.id_livro
+where devolvido = false;
+
 -- Q3) Liste todos os livros de um determinado tipo, como "Fantasia". Mostre o título do livro e o nome completo do autor.
 
 -- Q4) Encontre os autores que têm mais de um livro cadastrado no sistema. Mostre o nome completo do autor e o número de livros que ele possui.
