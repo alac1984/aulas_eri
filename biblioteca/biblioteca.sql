@@ -159,6 +159,18 @@ order by a.nome, a.sobrenome desc limit 1
 
 -- Q5) Liste todos os alunos que já pegaram emprestado um livro do tipo "Romance". Mostre o nome do aluno, sobrenome e o título do livro emprestado.
 
+select
+    a.nome,
+    a.sobrenome,
+    l.titulo,
+    t.nome_tipo
+from emprestimo
+join aluno a on a.id_aluno = aluno
+join livro l on l.id_livro = emprestimo.id_livro
+join tipo_livro t on l.tipo_livro = t.id_tipo_livro
+where nome_tipo = 'Fantasia'
+;
+
 -- ALTERAÇÕES NO BANCO
 
 -- Q6)  A nossa tabela livro representa um exemplar do livro na biblioteca. Mas na nossa biblioteca cada livro tem um número de registro, no formato REG-00000 (quando o livro é comprado pela universidade) ou DOA-00000 (quando o livro foi doado por alguém). Esses números são únicos, ou seja, não há dois livros com número de registro igual. O que fazer para dar de conta dessa lógica?
