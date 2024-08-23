@@ -175,6 +175,11 @@ where nome_tipo = 'Fantasia'
 
 -- Q6)  A nossa tabela livro representa um exemplar do livro na biblioteca. Mas na nossa biblioteca cada livro tem um número de registro, no formato REG-00000 (quando o livro é comprado pela universidade) ou DOA-00000 (quando o livro foi doado por alguém). Esses números são únicos, ou seja, não há dois livros com número de registro igual. O que fazer para dar de conta dessa lógica?
 
+select * from livro;
+--poderiamos criar 2 sequencias, e 1 coluna com o nome ORIGEM , tendo q ser informado no ato do insert, if quando doaçao incrementar para um, e outro if quando comprado,
+--alterando a tabela livro, acrescentando essa coluna com Origem ('comprado', 'doado')
+    
+
 -- Q7) Agora que nosso livro possui um número de registro, vamos inserir números de registro para os items que não possuímos.
 
 -- Q8) A tabela livro não possui ligação com a tabela situação, ou seja, não temos como cadastrar a situação dos livros. Faça a conexão correta entre essas tabelas e estabeleça para todos os livros atuais o estado de DISPONÍVEL, logo após limpar a tabela de empréstimos.
