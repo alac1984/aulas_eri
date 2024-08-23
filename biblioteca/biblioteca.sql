@@ -145,6 +145,17 @@ where nome_tipo = 'Fantasia'
 ;
 
 -- Q4) Encontre os autores que têm mais de um livro cadastrado no sistema. Mostre o nome completo do autor e o número de livros que ele possui.
+-- todos os livros estao relacionados cada 1 com um autor unico. anular essa questao ein kkkkk 5 livroscom 5 autores diferentes.
+select
+    titulo,
+    a.nome nome_autor,
+    a.sobrenome sobrenome_autor,
+    sum(autor)
+from livro
+join autor a on livro.autor = a.id_autor
+group by titulo, a.nome, a.sobrenome
+order by a.nome, a.sobrenome desc limit 1
+;
 
 -- Q5) Liste todos os alunos que já pegaram emprestado um livro do tipo "Romance". Mostre o nome do aluno, sobrenome e o título do livro emprestado.
 
