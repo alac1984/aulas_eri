@@ -57,6 +57,10 @@ create table if not exists emprestimo (
     constraint fk_id_livro foreign key(id_livro) references livro(id_livro)
 );
 
+create table if not exists estoque (
+
+);
+
 insert into autor (nome, sobrenome) values
 ('J.K.', 'Rowling'),
 ('George', 'Orwell'),
@@ -90,6 +94,10 @@ insert into livro (titulo, autor, editora, tipo_livro) values
 ('O Senhor dos Anéis: A Sociedade do Anel', 3, 3, 3),
 ('O Sol é Para Todos', 4, 4, 4),
 ('Cem Anos de Solidão', 5, 5, 4);
+
+insert into livro (titulo, autor, editora, tipo_livro) values
+('Harry Potter e a Câmara Secreta', 1, 1, 3)
+;
 
 insert into aluno (nome, sobrenome, endereco, contato) values
 ('Carlos', 'Silva', 'Rua A, 123', '555-1234'),
@@ -145,16 +153,15 @@ where nome_tipo = 'Fantasia'
 ;
 
 -- Q4) Encontre os autores que têm mais de um livro cadastrado no sistema. Mostre o nome completo do autor e o número de livros que ele possui.
--- todos os livros estao relacionados cada 1 com um autor unico. anular essa questao ein kkkkk 5 livroscom 5 autores diferentes.
-select
-    titulo,
-    a.nome nome_autor,
-    a.sobrenome sobrenome_autor,
-    sum(autor)
-from livro
-join autor a on livro.autor = a.id_autor
-group by titulo, a.nome, a.sobrenome
-order by a.nome, a.sobrenome desc limit 1
+
+select 
+	a.nome,
+	a.sobrenome,
+	count(l.id_livro) as livros
+from livro l
+join autor a on l.autor = a.id_autor
+group by a.nome, a.sobrenome
+having count(l.id_livro) > 1
 ;
 
 -- Q5) Liste todos os alunos que já pegaram emprestado um livro do tipo "Romance". Mostre o nome do aluno, sobrenome e o título do livro emprestado.
@@ -168,20 +175,17 @@ from emprestimo
 join aluno a on a.id_aluno = aluno
 join livro l on l.id_livro = emprestimo.id_livro
 join tipo_livro t on l.tipo_livro = t.id_tipo_livro
-where nome_tipo = 'Fantasia'
+where nome_tipo = 'Romance'
 ;
 
 -- ALTERAÇÕES NO BANCO
 
--- Q6)  A nossa tabela livro representa um exemplar do livro na biblioteca. Mas na nossa biblioteca cada livro tem um número de registro, no formato REG-00000 (quando o livro é comprado pela universidade) ou DOA-00000 (quando o livro foi doado por alguém). Esses números são únicos, ou seja, não há dois livros com número de registro igual. O que fazer para dar de conta dessa lógica?
+-- Q6) Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca. Quando fazemos empréstimos, o que realmente estamos emprestando não é um livro, mas sim um item do estoque. Criar a tabela estoque, com todos os campos necessários, e conecta-la à tabela situação. Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
 
-select * from livro;
---poderiamos criar 2 sequencias, e 1 coluna com o nome ORIGEM , tendo q ser informado no ato do insert, if quando doaçao incrementar para um, e outro if quando comprado,
---alterando a tabela livro, acrescentando essa coluna com Origem ('comprado', 'doado')
-    
+-- Q7) Quais alterações são necessárias na tabela empréstimo?
 
--- Q7) Agora que nosso livro possui um número de registro, vamos inserir números de registro para os items que não possuímos.
+-- Q8) Cadastrar 3 livros para cada item do estoque, exceto o Cem Anos de Solidão, que deverá ter 10 livros.
 
--- Q8) A tabela livro não possui ligação com a tabela situação, ou seja, não temos como cadastrar a situação dos livros. Faça a conexão correta entre essas tabelas e estabeleça para todos os livros atuais o estado de DISPONÍVEL, logo após limpar a tabela de empréstimos.
+-- Q9) Realizar 4 empréstimos e colocar a situação dos livros como EMPRESTADOS;
 
--- Q9) Agora, faça 2 empréstimos e uma devolução, atribuindo na devolução o status de DANIFICADO para o livro.
+-- Q10) Realizar 3 devoluções e deixar um dos livros como PERDIDO;
