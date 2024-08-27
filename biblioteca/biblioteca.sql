@@ -57,8 +57,24 @@ create table if not exists emprestimo (
     constraint fk_id_livro foreign key(id_livro) references livro(id_livro)
 );
 
-create table if not exists estoque (
+select * from emprestimo;
 
+alter table emprestimo
+rename column id_livro to id_estoque;
+
+-- Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca. Quando fazemos empréstimos, o que
+-- realmente estamos emprestando não é um livro, mas sim um item do estoque. Criar a tabela estoque, com todos os campos necessários,
+-- e conecta-la à tabela situação. Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
+
+create table if not exists estoque
+(
+    id_estoque    serial primary key,
+    id_livro      int,
+    id_emprestimo int,
+    id_situacao   int,
+    constraint fk_id_livro foreign key (id_livro) references livro (id_livro),
+    constraint fk_id_emprestimo foreign key (id_emprestimo) references emprestimo (id_emprestimo),
+    constraint fk_id_situacao foreign key (id_situacao) references situacao (id_situacao)
 );
 
 insert into autor (nome, sobrenome) values
