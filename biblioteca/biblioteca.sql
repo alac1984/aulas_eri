@@ -62,9 +62,10 @@ select * from emprestimo;
 alter table emprestimo
 rename column id_livro to id_estoque;
 
--- Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca. Quando fazemos empréstimos, o que
--- realmente estamos emprestando não é um livro, mas sim um item do estoque. Criar a tabela estoque, com todos os campos necessários,
--- e conecta-la à tabela situação. Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
+-- Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca.
+-- Quando fazemos empréstimos, o que realmente estamos emprestando não é um livro, mas sim um item do estoque.
+-- Criar a tabela estoque, com todos os campos necessários, e conecta-la à tabela situação.
+-- Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
 
 create table if not exists estoque
 (
@@ -76,6 +77,8 @@ create table if not exists estoque
     constraint fk_id_emprestimo foreign key (id_emprestimo) references emprestimo (id_emprestimo),
     constraint fk_id_situacao foreign key (id_situacao) references situacao (id_situacao)
 );
+
+select * from estoque;
 
 insert into autor (nome, sobrenome) values
 ('J.K.', 'Rowling'),
@@ -199,6 +202,8 @@ where nome_tipo = 'Romance'
 -- Q6) Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca. Quando fazemos empréstimos, o que realmente estamos emprestando não é um livro, mas sim um item do estoque. Criar a tabela estoque, com todos os campos necessários, e conecta-la à tabela situação. Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
 
 -- Q7) Quais alterações são necessárias na tabela empréstimo?
+
+-- > modificação do nome da coluna id_livro para id_estoque conectando ela a tabela estoque.
 
 -- Q8) Cadastrar 3 livros para cada item do estoque, exceto o Cem Anos de Solidão, que deverá ter 10 livros.
 
