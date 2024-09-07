@@ -5,6 +5,7 @@ drop table situacao cascade;
 drop table livro cascade;
 drop table aluno cascade;
 drop table emprestimo cascade;
+drop table estoque cascade;
 
 create table if not exists autor (
     id_autor serial primary key,
@@ -46,39 +47,26 @@ create table if not exists aluno (
     contato varchar(15)
 );
 
+create table if not exists estoque
+(
+    id_estoque    serial primary key,
+    livro      int,
+    situacao   int,
+    constraint fk_id_livro foreign key (livro) references livro (id_livro),
+    constraint fk_id_situacao foreign key (situacao) references situacao (id_situacao)
+);
+
 create table if not exists emprestimo (
     id_emprestimo serial primary key,
-    id_livro int,
+    estoque int,
     aluno int,
     data_emprestimo date,
     data_devolucao date,
     devolvido bool,
     constraint fk_id_aluno foreign key(aluno) references aluno(id_aluno),
-    constraint fk_id_livro foreign key(id_livro) references livro(id_livro)
+    constraint fk_id_estoque foreign key(estoque) references estoque(id_estoque)
 );
 
-select * from emprestimo;
-
-alter table emprestimo
-rename column id_livro to id_estoque;
-
--- Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca.
--- Quando fazemos empréstimos, o que realmente estamos emprestando não é um livro, mas sim um item do estoque.
--- Criar a tabela estoque, com todos os campos necessários, e conecta-la à tabela situação.
--- Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
-
-create table if not exists estoque
-(
-    id_estoque    serial primary key,
-    id_livro      int,
-    id_emprestimo int,
-    id_situacao   int,
-    constraint fk_id_livro foreign key (id_livro) references livro (id_livro),
-    constraint fk_id_emprestimo foreign key (id_emprestimo) references emprestimo (id_emprestimo),
-    constraint fk_id_situacao foreign key (id_situacao) references situacao (id_situacao)
-);
-
-select * from estoque;
 
 insert into autor (nome, sobrenome) values
 ('J.K.', 'Rowling'),
@@ -125,88 +113,22 @@ insert into aluno (nome, sobrenome, endereco, contato) values
 ('Mariana', 'Costa', 'Rua D, 101', '555-1121'),
 ('João', 'Pereira', 'Rua E, 112', '555-3141');
 
-insert into emprestimo (id_livro, aluno, data_emprestimo, data_devolucao, devolvido) values
-(1, 1, '2024-07-01', '2024-07-15', true),
-(2, 2, '2024-07-05', '2024-07-20', true),
-(3, 3, '2024-07-10', '2024-07-25', false),
-(4, 4, '2024-07-12', '2024-07-28', true),
-(5, 5, '2024-07-15', null, false);
-
--- AQUECIMENTO
-
--- Q1) Liste todos os livros, mostrando o título, o nome completo do autor (nome e sobrenome) e o nome da editora.
-
-select
-    titulo,
-    a.nome nome_autor,
-    a.sobrenome sobrenome_autor,
-    e.nome nome_editora
-from livro
-    join autor as a on a.id_autor = livro.autor
-    join editora as e on livro.editora = e.id_editora
+insert into estoque (livro, situacao) values
+(1, 1),
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(5, 1),
+(6, 1)
 ;
 
--- Q2) Encontre todos os empréstimos que ainda não foram devolvidos. Mostre o título do livro, o nome do aluno (nome e sobrenome) e a data de empréstimo.
+insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
+(1, 1, '2024-07-01', '2024-07-15', false);
 
-select
-    l.titulo titulo_livro,
-    a.nome nome_aluno,
-    a.sobrenome sobrenome_aluno,
-    data_emprestimo
-from emprestimo
-join aluno a on emprestimo.aluno = a.id_aluno
-join livro l on emprestimo.id_livro = l.id_livro
-where devolvido = false;
+select * from estoque;
+select * from emprestimo;
 
--- Q3) Liste todos os livros de um determinado tipo, como "Fantasia". Mostre o título do livro e o nome completo do autor.
+-- Agora temos uma missão:
 
-select
-    titulo titulo_livro,
-    a.nome nome_autor,
-    a.sobrenome sobrenome_autor,
-    tl.nome_tipo tipo
-from livro
-join autor a on livro.autor = a.id_autor
-join tipo_livro tl on livro.tipo_livro = tl.id_tipo_livro
-where nome_tipo = 'Fantasia'
-;
-
--- Q4) Encontre os autores que têm mais de um livro cadastrado no sistema. Mostre o nome completo do autor e o número de livros que ele possui.
-
-select 
-	a.nome,
-	a.sobrenome,
-	count(l.id_livro) as livros
-from livro l
-join autor a on l.autor = a.id_autor
-group by a.nome, a.sobrenome
-having count(l.id_livro) > 1
-;
-
--- Q5) Liste todos os alunos que já pegaram emprestado um livro do tipo "Romance". Mostre o nome do aluno, sobrenome e o título do livro emprestado.
-
-select
-    a.nome,
-    a.sobrenome,
-    l.titulo,
-    t.nome_tipo
-from emprestimo
-join aluno a on a.id_aluno = aluno
-join livro l on l.id_livro = emprestimo.id_livro
-join tipo_livro t on l.tipo_livro = t.id_tipo_livro
-where nome_tipo = 'Romance'
-;
-
--- ALTERAÇÕES NO BANCO
-
--- Q6) Vamos criar uma tabela de estoque. O estoque representa os livros que temos na biblioteca. Quando fazemos empréstimos, o que realmente estamos emprestando não é um livro, mas sim um item do estoque. Criar a tabela estoque, com todos os campos necessários, e conecta-la à tabela situação. Cada item do estoque deve ter um número de registro (int com 4 dígitos ou mais).
-
--- Q7) Quais alterações são necessárias na tabela empréstimo?
-
--- > modificação do nome da coluna id_livro para id_estoque conectando ela a tabela estoque.
-
--- Q8) Cadastrar 3 livros para cada item do estoque, exceto o Cem Anos de Solidão, que deverá ter 10 livros.
-
--- Q9) Realizar 4 empréstimos e colocar a situação dos livros como EMPRESTADOS;
-
--- Q10) Realizar 3 devoluções e deixar um dos livros como PERDIDO;
+-- A tabela estoque precisa ser atualizada toda vez que um empréstimo for feito. Como fazer isso? Precisamo usar um TRIGGER! Precisaremos de um trigger que dispare toda vez que houver uma inserção na tabela empréstimo. Quando houver inserção, o trigger deve alterar o status do item do estoque para emprestado.
