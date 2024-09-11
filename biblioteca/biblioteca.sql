@@ -126,9 +126,46 @@ insert into estoque (livro, situacao) values
 insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
 (1, 1, '2024-07-01', '2024-07-15', false);
 
-select * from estoque;
+insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
+(4, 1, '2024-07-01', '2024-07-15', false);
+
+select * from estoque order by id_estoque;
 select * from emprestimo;
 
 -- Agora temos uma missão:
 
 -- A tabela estoque precisa ser atualizada toda vez que um empréstimo for feito. Como fazer isso? Precisamo usar um TRIGGER! Precisaremos de um trigger que dispare toda vez que houver uma inserção na tabela empréstimo. Quando houver inserção, o trigger deve alterar o status do item do estoque para emprestado.
+
+create or replace function situacao_emprestimo()
+-- Essa função é executada sempre que há um emprestimo de livros
+returns trigger as $$
+	begin
+		update estoque
+		set situacao = 2
+		where id_estoque = new.estoque;
+	return new;
+	end;
+$$ language plpgsql;
+
+create trigger tg_situacao_emprestimo
+after insert on emprestimo
+for each row
+execute function situacao_emprestimo();
+
+-- Agora você tem uma missão
+-- Quando um aluno devolve um livro, isso é anotado da seguinte forma:
+
+select * from emprestimo;
+
+update emprestimo
+set devolvido = true
+where id_emprestimo = 4;
+
+-- Mas se você observar, fazer essa mudança no id_estoque = 4 não mudou a situacao do estoque
+-- na tabela estoque
+
+select * from estoque order by id_estoque;
+
+-- Crie um trigger de nome tg_situacao_devolucao e uma função de nome situacao_devolucao
+-- que rode toda vez que for feito um update na tabela emprestimo que setar um livro para
+-- devolvido. Esse trigger deve alterar a situacao do livro para disponível.
