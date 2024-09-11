@@ -131,6 +131,7 @@ insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvi
 
 select * from estoque order by id_estoque;
 select * from emprestimo;
+truncate table emprestimo;
 
 -- Agora temos uma missão:
 
@@ -169,3 +170,37 @@ select * from estoque order by id_estoque;
 -- Crie um trigger de nome tg_situacao_devolucao e uma função de nome situacao_devolucao
 -- que rode toda vez que for feito um update na tabela emprestimo que setar um livro para
 -- devolvido. Esse trigger deve alterar a situacao do livro para disponível.
+
+select * from situacao;
+select * from estoque;
+select * from emprestimo;
+
+
+
+create  or replace function situacao_devolucao()
+--  função é executada sempre que há uma devolução de livros.
+returns trigger as $$
+	begin
+		update estoque
+		set situacao = 1
+		where id_estoque = new.estoque;
+	return new;
+	end;
+$$ language plpgsql;
+
+create trigger tg_situacao_devolucao
+after update on emprestimo
+for each row
+execute function situacao_devolucao();
+
+insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
+(1, 1, '2024-07-01', '2024-07-15', false);
+
+insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
+(4, 1, '2024-07-01', '2024-07-15', false);
+
+update emprestimo
+set devolvido = true
+where id_emprestimo = 4;
+
+select * from estoque order by id_estoque;
