@@ -204,3 +204,10 @@ set devolvido = true
 where id_emprestimo = 4;
 
 select * from estoque order by id_estoque;
+
+-- Pronto, muito bem!
+-- Agora você vai criar um trigger para resolver o seguinte problema:
+-- Quando um item do estoque é marcado como a situação perdido, ele deve ser inserido numa tabela chamada 'estoque_perdido'.
+-- Essa tabela deverá ser igual a tabela estoque, com as mesmas colunas, e ela deve ser preenchida com todos os estoques
+-- que forem perdidos ao longo do tempo. É importante entender que um estoque perdido tem que SAIR da tabela estoque e ser inserido
+-- na tabela estoque_perdido.
