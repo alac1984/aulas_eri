@@ -129,10 +129,6 @@ insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvi
 insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
 (4, 1, '2024-07-01', '2024-07-15', false);
 
-select * from estoque order by id_estoque;
-select * from emprestimo;
-truncate table emprestimo;
-
 -- Agora temos uma missão:
 
 -- A tabela estoque precisa ser atualizada toda vez que um empréstimo for feito. Como fazer isso? Precisamo usar um TRIGGER! Precisaremos de um trigger que dispare toda vez que houver uma inserção na tabela empréstimo. Quando houver inserção, o trigger deve alterar o status do item do estoque para emprestado.
@@ -171,16 +167,11 @@ select * from estoque order by id_estoque;
 -- que rode toda vez que for feito um update na tabela emprestimo que setar um livro para
 -- devolvido. Esse trigger deve alterar a situacao do livro para disponível.
 
-select * from situacao;
-select * from estoque;
-select * from emprestimo;
-
-
-
 create  or replace function situacao_devolucao()
 --  função é executada sempre que há uma devolução de livros.
 returns trigger as $$
 	begin
+		if new.situacao = 1 then
 		update estoque
 		set situacao = 1
 		where id_estoque = new.estoque;
@@ -203,11 +194,36 @@ update emprestimo
 set devolvido = true
 where id_emprestimo = 4;
 
-select * from estoque order by id_estoque;
-
 -- Pronto, muito bem!
 -- Agora você vai criar um trigger para resolver o seguinte problema:
 -- Quando um item do estoque é marcado como a situação perdido, ele deve ser inserido numa tabela chamada 'estoque_perdido'.
 -- Essa tabela deverá ser igual a tabela estoque, com as mesmas colunas, e ela deve ser preenchida com todos os estoques
 -- que forem perdidos ao longo do tempo. É importante entender que um estoque perdido tem que SAIR da tabela estoque e ser inserido
 -- na tabela estoque_perdido.
+
+create table if not exists estoque_perdido(
+	id_estoque_perdido serial primary key,
+	livro int,
+	situacao int,
+	constraint fk_id_livro foreign key (livro) references livro (id_livro),
+	constraint fk_id_situacao foreign key (situacao) references situacao (id_situacao)
+);
+
+create or replace function situacao_perdido()
+returns trigger as $$
+	begin 
+		if new.situacao = 3 then
+			update estoque_perdido
+			set situacao = 3
+			where id_estoque_perdido = new.estoque;
+		end if;
+		return new;
+	end;
+$$ language plpgsql;
+
+create trigger tg_situacao_perdido
+after update on emprestimo
+for each row
+execute function situacao_perdido();
+
+select * from emprestimo;
