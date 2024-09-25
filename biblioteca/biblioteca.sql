@@ -62,7 +62,7 @@ create table if not exists emprestimo (
     aluno int,
     data_emprestimo date,
     data_devolucao date,
-    devolvido bool,
+    devolvido bool default false,
     constraint fk_id_aluno foreign key(aluno) references aluno(id_aluno),
     constraint fk_id_estoque foreign key(estoque) references estoque(id_estoque)
 );
@@ -171,10 +171,12 @@ create  or replace function situacao_devolucao()
 --  função é executada sempre que há uma devolução de livros.
 returns trigger as $$
 	begin
-		if new.situacao = 1 then
-		update estoque
-		set situacao = 1
-		where id_estoque = new.estoque;
+		raise notice 'Passei aqui';
+		if old.devolvido is false and new.devolvido is true then
+			update estoque
+			set situacao = 1
+			where id_estoque = new.estoque;
+		end if;
 	return new;
 	end;
 $$ language plpgsql;
@@ -184,15 +186,26 @@ after update on emprestimo
 for each row
 execute function situacao_devolucao();
 
-insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
-(1, 1, '2024-07-01', '2024-07-15', false);
-
-insert into emprestimo (estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
-(4, 1, '2024-07-01', '2024-07-15', false);
+select * from emprestimo;
 
 update emprestimo
 set devolvido = true
-where id_emprestimo = 4;
+where id_emprestimo = 1;
+
+select * from estoque;
+
+-- Outro teste: fazer outro tipo de update e ver o que acontece!
+
+insert into emprestimo(estoque, aluno, data_emprestimo, data_devolucao, devolvido) values
+(3, 4, '2024-08-10', '2024-08-12', false);
+
+select * from emprestimo;
+
+update emprestimo
+set aluno = 5
+where id_emprestimo = 2;
+
+select * from estoque;
 
 -- Pronto, muito bem!
 -- Agora você vai criar um trigger para resolver o seguinte problema:
